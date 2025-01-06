@@ -20,3 +20,16 @@ public class TrainingApplication {
     }
 }
 
+/* 실행 결과
+데이터베이스에서 데이터를 가져옵니다.
+title_0
+title_1
+title_2
+title_3
+title_4
+title_5
+title_6
+title_7
+title_8
+title_9
+*/
