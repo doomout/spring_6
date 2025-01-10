@@ -17,10 +17,12 @@ import com.example.shopping.repository.OrderRepository;
 import com.example.shopping.repository.ProductRepository;
 
 public class OrderServiceImpl implements OrderService {
+    // 의존성 주입: 각 Repository 객체들
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
 
+    // 생성자: 의존성 주입을 통해 각 Repository를 초기화
     public OrderServiceImpl(OrderRepository orderRepository, OrderItemRepository orderItemRepository, ProductRepository productRepository) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
@@ -77,6 +79,7 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
+    // 장바구니 아이템 리스트를 받아 총 금액 계산
     private int calculateTotalAmount(List<CartItemInput> cartItems) {
         int totalAmount = 0;
         for (CartItemInput cartItem : cartItems) {
@@ -85,6 +88,7 @@ public class OrderServiceImpl implements OrderService {
         return totalAmount;
     }
 
+    // 가격에 세금을 적용하여 청구 금액을 계산
     private int calculateTax(int price) {
         return (int) (price * 1.1);
     }
