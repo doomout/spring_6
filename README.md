@@ -22,4 +22,15 @@ JUnit: 5.10.2
    - 설정 정보(configuration): DI 컨테이너로 불러올 정보
    - 애플리케이션 컨텍스트: DI 컨테이너의 다른 이름
    - Bean 정의를 작성하는 대표적인 방법 3가지(스테리오타입 애너테이션, @Bean 메서드, <bean>태그)
+4. 프로파일로 설정 전환하기
+   - 프로파일: 설정을 그룹화 하는 DI 컨테이너의 기능
+   - 프로파일 사용법: @Profile("프로파일 이름") 을 사용할 구상 클래스에 설정한다.
+   - 활성화 할 프로파일 지정법
+     - 윈도우  
+     환경변수에 set SPRING_PROFILES_ACTIVE=프로파일 이름  
+     java main 메서드를 가진 클래스 이름  
+     - 리눅스
+     export SPRING_PROFILES_ACTIVE=프로파일 이름  
+     java main 메서드를 가진 클래스 이름
+     
    
