@@ -3,11 +3,13 @@ package com.example.training.repository;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import com.example.training.entity.Training;
 
 @Repository
+@Profile("production") //프로파일을 설정하고 이름을 "production" 으로 지정했다.
 public class ExternalTrainingRepository implements TrainingRepository {
     @Override
     public List<Training> selectAll() {

@@ -15,6 +15,8 @@ import com.example.training.service.TrainingService;
 public class TrainingApplication {
 
     public static void main(String[] args) {
+        //production 모드로 지정했다.
+        System.setProperty("spring.profiles.active", "production");
         @SuppressWarnings("resource")
 		ApplicationContext context = new AnnotationConfigApplicationContext(TrainingApplication.class);
         TrainingService trainingService = context.getBean(TrainingService.class);
@@ -26,3 +28,16 @@ public class TrainingApplication {
     }
 }
 
+/* 실행 결과
+외부 시스템에서 데이터를 가져옵니다.
+ex_title_0
+ex_title_1
+ex_title_2
+ex_title_3
+ex_title_4
+ex_title_5
+ex_title_6
+ex_title_7
+ex_title_8
+ex_title_9
+*/

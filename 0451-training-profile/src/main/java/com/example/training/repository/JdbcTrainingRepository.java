@@ -3,11 +3,13 @@ package com.example.training.repository;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import com.example.training.entity.Training;
 
 @Repository
+@Profile("staging") //프로파일을 지정하고 이름을 "staging"로 지정했다.
 public class JdbcTrainingRepository implements TrainingRepository {
     @Override
     public List<Training> selectAll() {
