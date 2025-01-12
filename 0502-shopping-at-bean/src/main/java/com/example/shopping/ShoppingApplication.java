@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,10 +15,24 @@ import com.example.shopping.input.CartInput;
 import com.example.shopping.input.CartItemInput;
 import com.example.shopping.input.OrderInput;
 import com.example.shopping.service.OrderService;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+
+import javax.sql.DataSource;
 
 @Configuration
 @ComponentScan
 public class ShoppingApplication {
+    // 코드 추가
+    @Bean
+    public DataSource dataSource() {
+        EmbeddedDatabase dataSource = new EmbeddedDatabaseBuilder()
+                .addScripts("schema.sql", "data.sql")
+                .setType(EmbeddedDatabaseType.H2).build();
+        return dataSource;
+    }
+
 
     public static void main(String[] args) {
         @SuppressWarnings("resource")
@@ -56,3 +71,8 @@ public class ShoppingApplication {
     }
 }
 
+/* 실행 결과
+[main] INFO org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseFactory
+-- Starting embedded database: url='jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false', username='sa'
+주문 확정 처리를 완료했습니다. 주문 ID=5efaff2c-d27f-4827-96c1-2399c1761b09
+*/
