@@ -38,6 +38,12 @@ public class ShoppingApplication {
         return dataSource;
     }
 
+    //JdbcTemplate 사용
+    @Bean
+    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
+    }
+
     public static void main(String[] args) {
 
         @SuppressWarnings("resource")
@@ -78,3 +84,21 @@ public class ShoppingApplication {
     }
 }
 
+/* 로그 + 실행 결과
+22:58:35.114 [main] INFO org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseFactory -- Starting embedded database: url='jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false', username='sa'
+22:58:35.851 [main] DEBUG org.springframework.jdbc.core.JdbcTemplate -- Executing prepared SQL update
+22:58:35.853 [main] DEBUG org.springframework.jdbc.core.JdbcTemplate -- Executing prepared SQL statement [INSERT INTO t_order values (?, ?, ?, ?, ?, ?, ?, ?)]
+22:58:35.911 [main] DEBUG org.springframework.jdbc.core.JdbcTemplate -- Executing prepared SQL query
+22:58:35.911 [main] DEBUG org.springframework.jdbc.core.JdbcTemplate -- Executing prepared SQL statement [SELECT * FROM t_product WHERE id=?]
+22:58:35.928 [main] DEBUG org.springframework.jdbc.core.JdbcTemplate -- Executing prepared SQL update
+22:58:35.928 [main] DEBUG org.springframework.jdbc.core.JdbcTemplate -- Executing prepared SQL statement [UPDATE t_product SET name=?, price=?, stock=? WHERE id=?]
+22:58:35.934 [main] DEBUG org.springframework.jdbc.core.JdbcTemplate -- Executing prepared SQL update
+22:58:35.934 [main] DEBUG org.springframework.jdbc.core.JdbcTemplate -- Executing prepared SQL statement [INSERT INTO t_order_item VALUES (?, ?, ?, ?, ?)]
+22:58:35.936 [main] DEBUG org.springframework.jdbc.core.JdbcTemplate -- Executing prepared SQL query
+22:58:35.936 [main] DEBUG org.springframework.jdbc.core.JdbcTemplate -- Executing prepared SQL statement [SELECT * FROM t_product WHERE id=?]
+22:58:35.937 [main] DEBUG org.springframework.jdbc.core.JdbcTemplate -- Executing prepared SQL update
+22:58:35.937 [main] DEBUG org.springframework.jdbc.core.JdbcTemplate -- Executing prepared SQL statement [UPDATE t_product SET name=?, price=?, stock=? WHERE id=?]
+22:58:35.940 [main] DEBUG org.springframework.jdbc.core.JdbcTemplate -- Executing prepared SQL update
+22:58:35.940 [main] DEBUG org.springframework.jdbc.core.JdbcTemplate -- Executing prepared SQL statement [INSERT INTO t_order_item VALUES (?, ?, ?, ?, ?)]
+주문 확정 처리를 완료했습니다. 주문 ID=97266e0d-fc07-4a3d-ba15-31396408b2a6
+*/
