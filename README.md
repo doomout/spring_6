@@ -32,5 +32,29 @@ JUnit: 5.10.2
      - 리눅스
      export SPRING_PROFILES_ACTIVE=프로파일 이름  
      java main 메서드를 가진 클래스 이름
-     
+5. MVC 란?
+   - Model: 업무의 로직(Service), 업무 데이터 보유(Entity), 데이터베이스 접근(Repository) 
+   - View: 화면을 표시하기 위한 HTML 생성(JSP 등의 템플릿 파일)
+   - Controller: 요청에서 응답까지의 전체 흐름 제어
+   - 스프링 MVC: MVC 패턴에 따라 웹 애플리케이션을 만들 수 있는 스프링의 기능.
+                주로 Controller 프로그램을 만들기 위한 기능 제공.  
+                Bean으로 관리 됨으로 Service 등의 의존 객체를 인젝션 하여 사용
+    
+6. Thymeleaf 란?
+   - HTML 문법에 따라 템플릿 파일을 작성할 수 있다.
+   - HTML 태크의 속성으로 Thymeleaf 의 구문을 삽입하기 때문에 템플릿 파일을 브라우저에서 직접 열어도 레이아웃이 깨지지 않는다.
+```html
+<tr th:each="prod:${productList}">
+    <td><a th:href="@{/catalog/display-details(productId=${prod.id})}"></td>
+    <td><span th:text="${prod.price}"></span>원</td>
+</tr>
+<tr>
+    <th>상품명</th><td><span th:text="${product.name}">상품명01</span></td>
+</tr>
+    <tr>
+        <th>가격</th><td><span th:text="${product.price}">300</span>원</td>
+    </tr>
+<div th:if="${order != null}">주문 ID「<span th:text="${order.id}"></span>」</div>
+<a th:href="@{/order/display-form}">주문 양식으로 돌아가기</a>
+```
    
