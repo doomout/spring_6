@@ -71,15 +71,17 @@ public class OrderController {
         return "order/orderConfirmation";
     }
 
-    @PostMapping(value = "/place-order")
+    //파라미터에 따라 다른 기능을 하도록 수정 correct 에는 주문 내용 변경으로
+    @PostMapping(value = "/place-order", params = "correct")
     public String correctInput(@Validated OrderInput orderInput, Model model) {
         return "order/orderForm";
     }
 
+    //파라미터에 따라 다른 기능을 하도록 수정 order 에는 주문 확정으로
+    @PostMapping(value = "/place-order", params = "order")
     public String order(@Validated OrderInput orderInput, Model model) {
         CartInput cartInput = dummyCartInput();
-        Order order = orderService
-            .placeOrder(orderInput, cartInput);
+        Order order = orderService.placeOrder(orderInput, cartInput);
         model.addAttribute("order", order);
         return "order/orderCompletion";
     }
