@@ -3,12 +3,14 @@ package com.example.shopping.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.shopping.exception.StockShortageException;
 import com.example.shopping.input.CartInput;
 import com.example.shopping.input.OrderInput;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -84,5 +86,11 @@ public class OrderController {
         Order order = orderService.placeOrder(orderInput, cartInput);
         model.addAttribute("order", order);
         return "order/orderCompletion";
+    }
+    
+    //예외 처리
+    @ExceptionHandler(StockShortageException.class)
+    public String displayStockShortagePage() {
+        return "order/stockShortage";
     }
 }
