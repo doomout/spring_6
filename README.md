@@ -57,4 +57,21 @@ JUnit: 5.10.2
 <div th:if="${order != null}">주문 ID「<span th:text="${order.id}"></span>」</div>
 <a th:href="@{/order/display-form}">주문 양식으로 돌아가기</a>
 ```
+7. Bean Validation 을 이용한 입력 검사
+    - 자바 표준 기술인 Bean Validation 으로 입력 검사를 하는 것이 편리하다
+    - 입력 검사 규칙을 애너테이션으로 지정하여 사용
+    - 주요 애너테이션
+      - @NotNull: 값이 null이 아닌지 확인
+      - @NotBlank: 문자열이 null,빈문자(""), 공백문자(" ") 가 아닌지 확인
+      - @NotEmpty: 문자열이 null,빈문자("")가 아닌지 확인 공백 문자(" ")는 허용,  
+                   List나 Map이 null이거나 크기가 0이 아닌지 확인
+      - @Max: 지정한 값 이하의 수치인지 확인  
+              (예)@Max(10)은 10 이하인지 확인
+      - @Min: 지정한 값 이상의 수치인지 확인   
+              (예)@Min(10)은 10 이상인지 확인
+      - @Size: 문자열 길이나 List, Map의 요소의 수가 최소 및 최대 범위인지 확인   
+              (예) @Size(min=5, max=10)는 5이상이고 10 이하인지 확인
+      - @Email: 이메일 주소 형식인지 확인
+      - @Pattern: 지정한 정규표현에 맞는지 확인
+      - @AssertTrue: Boolean 티압인 필드 혹은 메서드의 반환 값이 True인지 확인. 
    
