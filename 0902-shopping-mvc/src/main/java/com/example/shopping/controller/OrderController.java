@@ -7,6 +7,7 @@ import com.example.shopping.input.CartInput;
 import com.example.shopping.input.OrderInput;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -59,7 +60,12 @@ public class OrderController {
 
     @PostMapping("/validate-input")
     public String validateInput(
-        OrderInput orderInput, Model model) {
+            //@Validated 를 붙이면 핸들러 메서드가 호출 되기전에 입력 검사가 실시된다.
+            @Validated OrderInput orderInput, BindingResult bindingResult, Model model) {
+        //에러를 발견하면~
+        if(bindingResult.hasErrors()) {
+            return "order/orderForm"; //이 페이지로 이동
+        }
         CartInput cartInput = dummyCartInput();
         model.addAttribute("cartInput", cartInput);
         return "order/orderConfirmation";
