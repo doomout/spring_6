@@ -53,4 +53,12 @@ public class ProductMaintenanceRestController {
                 .toUri();
         return ResponseEntity.created(location).build();
     }
+
+    //DELETE로 데이터를 삭제한다
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteProduct(@PathVariable String id) {
+        productMaintenanceService.delete(id);
+    }
+
 }
