@@ -78,5 +78,4 @@ public class ProductMaintenanceRestController {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public void handleNotFound() {
     }
-
 }
