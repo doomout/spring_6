@@ -1,14 +1,17 @@
 package com.example.shopping.controller;
 
+import java.net.URI;
 import java.util.List;
 
 import com.example.shopping.input.ProductMaintenanceInput;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.shopping.entity.Product;
 import com.example.shopping.service.ProductMaintenanceService;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/api/products")
@@ -36,5 +39,18 @@ public class ProductMaintenanceRestController {
                               @Validated @RequestBody ProductMaintenanceInput productMaintenanceInput) {  //@Validated 입력 검사
         productMaintenanceInput.setId(id);
         productMaintenanceService.update(productMaintenanceInput);
+    }
+
+    //POST로 데이터를 등록한다
+    @PostMapping
+    public ResponseEntity registerProduct(
+            @Validated @RequestBody ProductMaintenanceInput productMaintenanceInput) { //@Validated 입력 검사
+        Product product = productMaintenanceService.register(productMaintenanceInput);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequestUri()
+                .path("/{id}")
+                .buildAndExpand(product.getId())
+                .toUri();
+        return ResponseEntity.created(location).build();
     }
 }
