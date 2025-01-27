@@ -113,4 +113,130 @@ JUnit: 5.10.2
     - denyAll: 무조건 접근 불가
     - isAuthenticated: 인증되었다.(권한은 묻지 않는다.)
     - isAnonymous: 인증되지 않았다(인증되어 있으면 접근 불가)
+14. Spring Security Password Encoders  
+
+**1. NoOpPasswordEncoder**
+    - **설명:** 비밀번호를 암호화하지 않고 평문 그대로 저장합니다.  
+    - **용도:** 테스트 환경에서만 사용. 실제 환경에서는 사용 금지.  
+```java
+      @Bean
+      public PasswordEncoder passwordEncoder() {
+          return NoOpPasswordEncoder.getInstance();
+      }
+      **비밀번호 저장 형식:** `{noop}password`
+```
+
+---
+
+**2. BCryptPasswordEncoder**  
+    - **설명:** 가장 널리 사용되는 암호화 방식으로, 강력한 보안을 제공합니다. 해싱 알고리즘을 사용하여 비밀번호를 암호화합니다.  
+    - **용도:** 운영 환경에서 권장.  
+    ```java
+            @Bean
+            public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+            }
+    ```  
+            - **비밀번호 저장 형식:** `$2a$` 또는 `$2b$`로 시작하는 해시 값.
+
+---
+
+**3. Pbkdf2PasswordEncoder**  
+    - **설명:** PBKDF2 알고리즘을 사용하여 비밀번호를 암호화하며, 반복 횟수를 설정해 보안을 강화할 수 있습니다.  
+    - **용도:** 높은 보안이 필요한 경우.
+```java
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+      return new Pbkdf2PasswordEncoder("secret", 65536, 256);
+  }
+    - `secret`: 키 생성용 시드 값.
+    - `65536`: 반복 횟수.
+    - `256`: 해시 키 길이.
+```
+
+---
+
+**4. SCryptPasswordEncoder**
+    - **설명:** 메모리와 CPU 자원을 많이 사용하도록 설계된 알고리즘으로, 브루트포스 공격을 어렵게 만듭니다.  
+    - **용도:** 메모리 및 연산 자원이 충분한 환경에서 사용.  
+```java
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+      return new SCryptPasswordEncoder();
+  }
+    - **비밀번호 저장 형식:** `$e0801$`로 시작하는 해시 값.
+```
+
+---
+
+## **5. Argon2PasswordEncoder**
+- **설명:** 2015년 암호화 알고리즘 대회에서 우승한 알고리즘. 메모리 및 연산 복잡성을 설정할 수 있습니다.  
+- **용도:** 최신 보안 요구 사항을 만족하는 방식.  
+```java
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+      return new Argon2PasswordEncoder();
+  }
+- **비밀번호 저장 형식:** `$argon2id$`로 시작하는 해시 값.
+```
+
+---
+
+## **6. DelegatingPasswordEncoder**  
+- **설명:** 여러 `PasswordEncoder`를 동시에 사용 가능하도록 설정하는 멀티 암호화 방식.  
+- **용도:** 다양한 암호화 방식을 동시에 지원해야 할 때.  
+```java
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+      String idForEncode = "bcrypt";
+      Map<String, PasswordEncoder> encoders = new HashMap<>();
+      encoders.put("bcrypt", new BCryptPasswordEncoder());
+      encoders.put("noop", NoOpPasswordEncoder.getInstance());
+      encoders.put("pbkdf2", new Pbkdf2PasswordEncoder());
+      encoders.put("scrypt", new SCryptPasswordEncoder());
+      encoders.put("argon2", new Argon2PasswordEncoder());
+
+      return new DelegatingPasswordEncoder(idForEncode, encoders);
+  }
+ 
+    - `idForEncode`: 기본 암호화 방식 (`bcrypt`).
+    - 사용 예: 비밀번호 저장 시 `bcrypt` 사용, 기존에 저장된 평문 비밀번호(`noop`)도 지원 가능.
+```
+
+---
+
+## **각 암호화 방식 비교**
+
+| 암호화 방식            | 보안 수준     | 속도      | 특징                                   |
+|------------------------|--------------|-----------|----------------------------------------|
+| NoOpPasswordEncoder    | 낮음          | 빠름      | 테스트 용도                             |
+| BCryptPasswordEncoder  | 높음          | 보통      | 권장 방식. `Salt` 자동 생성             |
+| Pbkdf2PasswordEncoder  | 매우 높음     | 느림      | 반복 횟수로 보안성 강화 가능            |
+| SCryptPasswordEncoder  | 매우 높음     | 느림      | 메모리 사용량 증가                      |
+| Argon2PasswordEncoder  | 매우 높음     | 느림      | 최신 암호화 알고리즘. 높은 보안성        |
+| DelegatingPasswordEncoder | 유연함       | 설정에 따라 다름 | 여러 암호화 방식 동시 지원              |
+
+---
+
+## **운영 환경에서의 권장 설정**
+- 최신 보안 요구 사항을 만족시키려면 `BCryptPasswordEncoder`를 사용하는 것이 가장 일반적입니다.
+  ```java
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+      return new BCryptPasswordEncoder();
+  }
+  ```
+
+- 최신 보안 알고리즘을 선호한다면 `Argon2PasswordEncoder`를 사용할 수도 있습니다.
+  ```java
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+      return new Argon2PasswordEncoder();
+  }
+  ```
+
+---
+
+
+
    
