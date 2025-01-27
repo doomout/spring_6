@@ -104,4 +104,13 @@ JUnit: 5.10.2
 12. 주요 응답 헤더
     - Content-Type: 응답 바디의 데이터 형식을 지원한다.
     - Location: 새로 등록한 리소스의 URL 을 지정한다.
+13. 스프링 시큐리티 접근 가능한 조건을 지정하는 주요 메서드
+    - hasRole: 지정한 권한을 사용자가 가지고 있다.
+    - hasAnyRole: 지정한 권한 중 하나를 사용자가 갖고 있다.
+    - hasAuthority: 사용자가 지정한 권한을 갖고 있다. 권한 이름이 역할이 아닌 경우 사용
+    - hasAnyAuthority: 지정한 권한 중 하나를 사용자가 갖고 있다.
+    - permitAll: 무조건 접근 가능
+    - denyAll: 무조건 접근 불가
+    - isAuthenticated: 인증되었다.(권한은 묻지 않는다.)
+    - isAnonymous: 인증되지 않았다(인증되어 있으면 접근 불가)
    
