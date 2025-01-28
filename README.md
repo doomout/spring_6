@@ -123,7 +123,7 @@ JUnit: 5.10.2
       public PasswordEncoder passwordEncoder() {
           return NoOpPasswordEncoder.getInstance();
       }
-      **비밀번호 저장 형식:** `{noop}password`
+      //비밀번호 저장 형식:** `{noop}password`
 ```
 
 ---
@@ -131,13 +131,14 @@ JUnit: 5.10.2
 **2. BCryptPasswordEncoder**  
     - **설명:** 가장 널리 사용되는 암호화 방식으로, 강력한 보안을 제공합니다. 해싱 알고리즘을 사용하여 비밀번호를 암호화합니다.  
     - **용도:** 운영 환경에서 권장.  
-    ```java
-            @Bean
-            public PasswordEncoder passwordEncoder() {
-                return new BCryptPasswordEncoder();
-            }
-    ```  
-            - **비밀번호 저장 형식:** `$2a$` 또는 `$2b$`로 시작하는 해시 값.
+```java
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+            return new BCryptPasswordEncoder();
+        }
+ 
+        //비밀번호 저장 형식:** `$2a$` 또는 `$2b$`로 시작하는 해시 값.
+```
 
 ---
 
@@ -149,22 +150,22 @@ JUnit: 5.10.2
   public PasswordEncoder passwordEncoder() {
       return new Pbkdf2PasswordEncoder("secret", 65536, 256);
   }
-    - `secret`: 키 생성용 시드 값.
-    - `65536`: 반복 횟수.
-    - `256`: 해시 키 길이.
+//    `secret`: 키 생성용 시드 값.
+//    `65536`: 반복 횟수.
+//    `256`: 해시 키 길이.
 ```
 
 ---
 
-**4. SCryptPasswordEncoder**
-    - **설명:** 메모리와 CPU 자원을 많이 사용하도록 설계된 알고리즘으로, 브루트포스 공격을 어렵게 만듭니다.  
+**4. SCryptPasswordEncoder**  
+    - **설명:** 메모리와 CPU 자원을 많이 사용하도록 설계된 알고리즘으로, 브루트포스 공격을 어렵게 만듭니다.     
     - **용도:** 메모리 및 연산 자원이 충분한 환경에서 사용.  
 ```java
   @Bean
   public PasswordEncoder passwordEncoder() {
       return new SCryptPasswordEncoder();
   }
-    - **비밀번호 저장 형식:** `$e0801$`로 시작하는 해시 값.
+  //비밀번호 저장 형식:** `$e0801$`로 시작하는 해시 값.
 ```
 
 ---
@@ -177,7 +178,7 @@ JUnit: 5.10.2
   public PasswordEncoder passwordEncoder() {
       return new Argon2PasswordEncoder();
   }
-- **비밀번호 저장 형식:** `$argon2id$`로 시작하는 해시 값.
+   //비밀번호 저장 형식:** `$argon2id$`로 시작하는 해시 값.
 ```
 
 ---
@@ -198,9 +199,8 @@ JUnit: 5.10.2
 
       return new DelegatingPasswordEncoder(idForEncode, encoders);
   }
- 
-    - `idForEncode`: 기본 암호화 방식 (`bcrypt`).
-    - 사용 예: 비밀번호 저장 시 `bcrypt` 사용, 기존에 저장된 평문 비밀번호(`noop`)도 지원 가능.
+  //`idForEncode`: 기본 암호화 방식 (`bcrypt`).
+  //사용 예: 비밀번호 저장 시 `bcrypt` 사용, 기존에 저장된 평문 비밀번호(`noop`)도 지원 가능.
 ```
 
 ---
