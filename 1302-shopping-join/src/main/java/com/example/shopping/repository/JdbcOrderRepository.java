@@ -1,10 +1,19 @@
 package com.example.shopping.repository;
 
+import com.example.shopping.entity.OrderItem;
+import com.example.shopping.enumeration.PaymentMethod;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
 
 import com.example.shopping.entity.Order;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 @Repository
 public class JdbcOrderRepository implements OrderRepository {
@@ -40,4 +49,35 @@ public class JdbcOrderRepository implements OrderRepository {
               o.id = ?""", new DataClassRowMapper<>(Order.class), id);
     }
 
+    //JdbcOrderRepository 클래스의 selectById 메서드로
+    //일대다 관계의 객체(Order 객체가 복수의 OrderItem 객체를 가진 상태)로 맵핑하도록 수정합시다.
+    static class OrderResultSetExtractor implements ResultSetExtractor<Order> {
+        @Override
+        public Order extractData(ResultSet rs) throws SQLException, DataAccessException {
+            Order order = null;
+            while(rs.next()) {
+                if (order == null) {
+                    order = new Order();
+                    order.setOrderItems(new ArrayList<>());
+                    order.setId(rs.getString("o_id"));
+                    order.setOrderDateTime(rs.getObject("o_order_date_time", LocalDateTime.class));
+                    order.setBillingAmount(rs.getInt("o_billing_amount"));
+                    order.setCustomerName(rs.getString("o_customer_name"));
+                    order.setCustomerAddress(rs.getString("o_customer_address"));
+                    order.setCustomerPhone(rs.getString("o_customer_phone"));
+                    order.setCustomerEmailAddress(rs.getString("o_customer_email_address"));
+                    order.setPaymentMethod(PaymentMethod.valueOf(rs.getString("o_payment_method")));
+                }
+                OrderItem orderItem = new OrderItem();
+                orderItem.setId(rs.getString("i_id"));
+                orderItem.setOrderId(rs.getString("i_order_id"));
+                orderItem.setProductId(rs.getString("i_product_id"));
+                orderItem.setPriceAtOrder(rs.getInt("i_price_at_order"));
+                orderItem.setQuantity(rs.getInt("i_quantity"));
+
+                order.getOrderItems().add(orderItem);
+            }
+            return order;
+        }
+    }
 }
