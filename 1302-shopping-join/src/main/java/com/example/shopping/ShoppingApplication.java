@@ -1,8 +1,10 @@
 package com.example.shopping;
 
 
+import com.example.shopping.entity.Order;
 import com.example.shopping.entity.OrderItem;
 import com.example.shopping.repository.OrderItemRepository;
+import com.example.shopping.repository.OrderRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -18,6 +20,15 @@ public class ShoppingApplication {
         System.out.println("------------- OrderItem의 내용 -------------");
         System.out.println(orderItem.getPriceAtOrder());
         System.out.println(orderItem.getProduct());
+
+        OrderRepository orderRepository = context.getBean(OrderRepository.class);
+        Order order = orderRepository.selectById("o01");
+
+        System.out.println("------------- Order의 내용 -------------");
+        System.out.println(order.getCustomerName());
+        for (OrderItem i : order.getOrderItems()) {
+            System.out.println(i.getPriceAtOrder());
+        }
     }
 }
 
