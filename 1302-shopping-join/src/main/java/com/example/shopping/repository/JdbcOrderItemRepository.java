@@ -1,10 +1,15 @@
 package com.example.shopping.repository;
 
+import com.example.shopping.entity.Product;
 import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.example.shopping.entity.OrderItem;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 @Repository
 public class JdbcOrderItemRepository implements OrderItemRepository {
@@ -33,5 +38,28 @@ public class JdbcOrderItemRepository implements OrderItemRepository {
               ON i.product_id = p.id
             WHERE
               i.id = ?""", new DataClassRowMapper<>(OrderItem.class), id);
+    }
+
+    //제대로 객체에 맵핑되도록 수정합시다. RowMapper 인터페이스를 구현한 클래스를 작성해야 합니다.
+    static class OrderItemRowMapper implements RowMapper<OrderItem> {
+        @Override
+        public OrderItem mapRow(ResultSet rs, int rowNum) throws SQLException {
+            OrderItem orderItem = new OrderItem();
+            orderItem.setId(rs.getString("i_id"));
+            orderItem.setOrderId(rs.getString("i_order_id"));
+            orderItem.setProductId(rs.getString("i_product_id"));
+            orderItem.setPriceAtOrder(rs.getInt("i_price_at_order"));
+            orderItem.setQuantity(rs.getInt("i_quantity"));
+
+            Product product = new Product();
+            product.setId(rs.getString("p_id"));
+            product.setName(rs.getString("p_name"));
+            product.setPrice(rs.getInt("p_price"));
+            product.setStock(rs.getInt("p_stock"));
+
+            orderItem.setProduct(product);
+
+            return orderItem;
+        }
     }
 }

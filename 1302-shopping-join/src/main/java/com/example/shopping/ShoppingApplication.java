@@ -7,6 +7,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 
+//수정했으면 TrainingApplication 클래스의 main 메서드 안에서 selectById 메서드를 호출하여 객체의 내용을 확인합시다.
 @SpringBootApplication
 public class ShoppingApplication {
     public static void main(String[] args) {
