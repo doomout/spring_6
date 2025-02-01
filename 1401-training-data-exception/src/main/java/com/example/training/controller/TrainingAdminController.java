@@ -3,6 +3,7 @@ package com.example.training.controller;
 import java.util.List;
 
 import com.example.training.input.TrainingAdminInput;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -53,7 +54,13 @@ public class TrainingAdminController {
 
 	@PostMapping(value = "/register", params = "register")
 	public String register(@Validated TrainingAdminInput trainingAdminInput, Model model) {
-        trainingAdminService.register(trainingAdminInput);
+		//키가 중복된 경우, 원래 입력 화면으로 되돌려서 다른 키를 입력하도록 유도
+		try {
+			trainingAdminService.register(trainingAdminInput);
+		} catch (DuplicateKeyException ex) {
+			model.addAttribute("duplicateError", "키가 중복되었습니다. 다른 키를 입력하세요.");
+			return "admin/training/registrationForm";
+		}
         model.addAttribute("trainingId", trainingAdminInput.getId());
         return "admin/training/registrationCompletion";
 	}
