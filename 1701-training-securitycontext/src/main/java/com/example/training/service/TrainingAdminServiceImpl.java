@@ -34,7 +34,9 @@ public class TrainingAdminServiceImpl implements TrainingAdminService {
 
 	@Override
 	public void update(TrainingAdminInput trainingAdminInput, String userId) {
-        auditLogService.registerLog("강의 갱신", userId);
+        //사용자 정보 받는 부분이 변경 되어 파라미터에서 삭제
+        //auditLogService.registerLog("강의 갱신", userId);
+        auditLogService.registerLog("강의 갱신");
         Training training = new Training();
         training.setId(trainingAdminInput.getId());
         training.setTitle(trainingAdminInput.getTitle());
