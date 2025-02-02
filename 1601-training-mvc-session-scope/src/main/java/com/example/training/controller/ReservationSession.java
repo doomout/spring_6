@@ -14,6 +14,7 @@ import com.example.training.input.ReservationInput;
 public class ReservationSession implements Serializable {
     private ReservationInput reservationInput;
 
+    //세션 스코프 메모리 해제
     public void clearData() {
         this.reservationInput = null;
     }
