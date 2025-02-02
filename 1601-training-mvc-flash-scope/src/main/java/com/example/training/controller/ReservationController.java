@@ -77,6 +77,14 @@ public class ReservationController {
         Reservation reservation = reservationService.reserve(reservationInput);
         model.addAttribute("reservation", reservation);
         reservationSession.clearData();
+
+        //return "reservation/reservationCompletion";
+        return "redirect:/reservation/display-completion";
+    }
+
+    //PRG(Post Redirect Get) 패턴 적용
+    @GetMapping("/display-completion")
+    public String displayCompletion() {
         return "reservation/reservationCompletion";
     }
 
