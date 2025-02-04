@@ -1,5 +1,11 @@
 package com.example.sample.service;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+//프로퍼티 설정
+@ConfigurationProperties(prefix = "discount")
+@Component
 public class DiscountProperties {
     private double rate;
     private int max;
