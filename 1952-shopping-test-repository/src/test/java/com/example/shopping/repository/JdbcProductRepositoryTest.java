@@ -40,4 +40,22 @@ public class JdbcProductRepositoryTest {
 
         assertThat(products.size()).isEqualTo(5);
     }
+
+    //ID로 검색하여 Product 객체의 내용이 예상과 일치하는지 확인
+    @Test
+    void test_selectById() {
+        Product product = productRepository.selectById("p01");
+
+        // 로그 출력 (INFO 레벨)
+        log.info("=== 조회된 상품 정보 ===");
+        log.info("ID: {}", product.getId());
+        log.info("상품명: {}", product.getName());
+        log.info("가격: {}", product.getPrice());
+        log.info("재고: {}", product.getStock());
+
+        //검증
+        assertThat(product.getName()).isEqualTo("지우개");
+        assertThat(product.getPrice()).isEqualTo(100);
+        assertThat(product.getStock()).isEqualTo(10);
+    }
 }
