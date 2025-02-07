@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -57,5 +58,34 @@ public class JdbcProductRepositoryTest {
         assertThat(product.getName()).isEqualTo("지우개");
         assertThat(product.getPrice()).isEqualTo(100);
         assertThat(product.getStock()).isEqualTo(10);
+    }
+
+    //해당 ID의 데이터를 업데이트하고 t_product 테이블의 레코드가 예상대로 변경되는지 확인
+    @Test
+    void test_update() {
+        Product training = new Product();
+        training.setId("p01");
+        training.setName("엽서");
+        training.setPrice(120);
+        training.setStock(5);
+
+        log.info("업데이트할 제품 데이터: {}", training);
+
+        boolean result = productRepository.update(training);
+
+        // 업데이트 결과 확인 로그
+        log.info("업데이트 결과: {}", result);
+
+        assertThat(result).isEqualTo(true);
+
+        Map<String, Object> trainingMap = jdbcTemplate.queryForMap(
+                "SELECT * FROM t_product WHERE id=?", "p01");
+
+        // DB에서 데이터를 조회하여 로그로 출력
+        log.info("DB에서 조회한 데이터: {}", trainingMap);
+
+        assertThat(trainingMap.get("name")).isEqualTo("엽서");
+        assertThat(trainingMap.get("price")).isEqualTo(120);
+        assertThat(trainingMap.get("stock")).isEqualTo(5);
     }
 }
