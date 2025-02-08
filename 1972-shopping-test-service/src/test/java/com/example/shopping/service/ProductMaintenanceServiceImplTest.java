@@ -5,6 +5,7 @@ import com.example.shopping.input.ProductMaintenanceInput;
 import com.example.shopping.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -34,7 +35,8 @@ class ProductMaintenanceServiceImplTest {
     @Test
     public void test_update() {
         // productRepository.update(any())가 호출되면 항상 true를 반환하도록 설정
-        doReturn(true).when(productRepository).update(any());
+        ArgumentCaptor<Product> productCaptor = ArgumentCaptor.forClass(Product.class);
+        doReturn(true).when(productRepository).update(productCaptor.capture());
 
         // 테스트용 입력 데이터 생성
         ProductMaintenanceInput productMaintenanceInput = new ProductMaintenanceInput();
@@ -45,6 +47,13 @@ class ProductMaintenanceServiceImplTest {
 
         // 서비스의 update() 메서드를 실행 (예외가 발생하지 않으면 성공)
         productMaintenanceService.update(productMaintenanceInput);
+
+        //메서드의 인수로 전달된 Product 객체의 필드 값이 올바른지 확인
+        Product product = productCaptor.getValue();
+        assertThat(product.getId()).isEqualTo("p01");
+        assertThat(product.getName()).isEqualTo("pname01");
+        assertThat(product.getPrice()).isEqualTo(100);
+        assertThat(product.getStock()).isEqualTo(10);
     }
 
     // update() 실행 시 갱신이 실패했을 때 예외 발생 여부를 확인하는 테스트
@@ -78,5 +87,16 @@ class ProductMaintenanceServiceImplTest {
         // findAll() 실행 후 결과 검증
         List<Product> actual = productMaintenanceService.findAll();
         assertThat(actual.size()).isEqualTo(2);  // 리스트 크기가 2인지 확인
+    }
+
+    //최소한 검색 결과가 예상대로 나오는지 확인
+    @Test
+    void test_findById() {
+        Product prod = new Product();
+        prod.setName("바인더");
+        doReturn(prod).when(productRepository).selectById("p01");
+
+        Product product = productMaintenanceService.findById("p01");
+        assertThat(product.getName()).isEqualTo("바인더");
     }
 }
