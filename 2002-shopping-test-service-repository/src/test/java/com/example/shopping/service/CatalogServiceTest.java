@@ -25,4 +25,13 @@ public class CatalogServiceTest {
         List<Product> products = catalogService.findAll();
         assertThat(products.size()).isEqualTo(5);
     }
+
+    //ID로 검색하여 Product 객체의 내용이 예상과 일치하는지 확인
+    @Test
+    void test_findById() {
+        Product product = catalogService.findById("p01");
+        assertThat(product.getName()).isEqualTo("지우개");
+        assertThat(product.getPrice()).isEqualTo(100);
+        assertThat(product.getStock()).isEqualTo(10);
+    }
 }
