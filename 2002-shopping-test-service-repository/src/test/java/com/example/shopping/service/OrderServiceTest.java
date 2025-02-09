@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.example.shopping.exception.StockShortageException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +21,7 @@ import com.example.shopping.input.CartItemInput;
 import com.example.shopping.input.OrderInput;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @Transactional
@@ -82,4 +84,29 @@ class OrderServiceTest {
         assertThat(p01Stock).isEqualTo(7);
         assertThat(p02Stock).isEqualTo(16);
     }
+
+    //재고가 부족할 때 예상한 예외가 던져지는지 확인하는 테스트 메서드
+    @Test
+    void test_placeOrder_재고부족() {
+        OrderInput orderInput = new OrderInput();
+        orderInput.setPaymentMethod(PaymentMethod.CONVENIENCE_STORE);
+
+        //장바구니 생성 및 상품 추가
+        List<CartItemInput> cartItemInputs = new ArrayList<>();
+        CartItemInput cartItemInput = new CartItemInput();
+        cartItemInput.setProductId("p01");
+        cartItemInput.setProductPrice(100);
+        cartItemInput.setQuantity(11); //재고 부족을 발생시키기 위해 일부러 11개 주문
+        cartItemInputs.add(cartItemInput); //장바구니에 상품 추가
+
+        //장바구니 정보를 저장
+        CartInput cartInput = new CartInput();
+        cartInput.setCartItemInputs(cartItemInputs);
+
+        //주문할 때 StockShortageException 예외가 발생하는지 검증
+        assertThatThrownBy(() -> {
+            orderService.placeOrder(orderInput, cartInput);
+        }).isInstanceOf(StockShortageException.class);
+    }
+
 }
