@@ -3,11 +3,13 @@ package com.example.shopping.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,12 +19,16 @@ import com.example.shopping.input.CartInput;
 import com.example.shopping.input.CartItemInput;
 import com.example.shopping.input.OrderInput;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @Transactional
 @Sql("OrderServiceTest.sql")
 class OrderServiceTest {
     @Autowired
     OrderService orderService;
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
     @Test
     void test_placeOrder() {
@@ -52,8 +58,28 @@ class OrderServiceTest {
         CartInput cartInput = new CartInput();
         cartInput.setCartItemInputs(cartItemInputs);
 
-        @SuppressWarnings("unused")
 		Order order = orderService.placeOrder(orderInput, cartInput);
 
+        //발급받은 주문 ID를 사용하여 주문 데이터를 검색
+        Map<String, Object> orderMap = jdbcTemplate.queryForMap("SELECT * FROM t_order WHERE id=?", order.getId());
+
+        //검색한 주문 데이터의 고객 데이터가 예상대로인가?
+        assertThat(orderMap.get("customer_name")).isEqualTo("김철수");
+        assertThat(orderMap.get("customer_phone")).isEqualTo("010-0000-0000");
+        assertThat(orderMap.get("customer_address")).isEqualTo("서울시");
+        assertThat(orderMap.get("customer_email_address")).isEqualTo("taro@example.com");
+        assertThat(orderMap.get("payment_method")).isEqualTo(PaymentMethod.CONVENIENCE_STORE.toString());
+        assertThat(orderMap.get("billing_amount")).isEqualTo(1210);
+        assertThat(orderMap.get("order_date_time")).isNotNull();
+
+        //발급된 주문 ID에 연결된 주문 상세 내역 데이터의 개수가 예상대로인가?
+        int orderItemCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM t_order_item WHERE order_id=?", Integer.class, order.getId());
+        assertThat(orderItemCount).isEqualTo(2);
+
+        //주문한 상품의 재고 수량이 예상대로 변경되었는가?
+        int p01Stock = jdbcTemplate.queryForObject("SELECT stock FROM t_product WHERE id=?", Integer.class, "p01");
+        int p02Stock = jdbcTemplate.queryForObject("SELECT stock FROM t_product WHERE id=?", Integer.class, "p02");
+        assertThat(p01Stock).isEqualTo(7);
+        assertThat(p02Stock).isEqualTo(16);
     }
 }
