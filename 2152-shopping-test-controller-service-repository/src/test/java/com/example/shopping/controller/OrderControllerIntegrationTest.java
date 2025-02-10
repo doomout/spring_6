@@ -2,7 +2,9 @@ package com.example.shopping.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import com.example.shopping.entity.Order;
 import com.example.shopping.input.OrderInput;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +13,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.shopping.enumeration.PaymentMethod;
 import com.example.shopping.input.CartInput;
 import com.example.shopping.input.CartItemInput;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -59,7 +66,34 @@ class OrderControllerIntegrationTest {
         OrderSession orderSession = new OrderSession();
         orderSession.setOrderInput(orderInput);
         orderSession.setCartInput(cartInput);
-        
-        
+
+        MvcResult mvcResult = mockMvc.perform(
+                        post("/order/place-order")
+                                .param("order", "")
+                                .sessionAttr("scopedTarget.orderSession", orderSession)
+                )
+                .andExpect(redirectedUrl("/order/display-completion"))
+                .andReturn();
+        ;
+        Order order = (Order)mvcResult.getFlashMap().get("order");
+
+        Map<String, Object> orderMap = jdbcTemplate.queryForMap("SELECT * FROM t_order WHERE id=?", order.getId());
+        assertThat(orderMap.get("customer_name")).isEqualTo("김철수");
+        assertThat(orderMap.get("customer_phone")).isEqualTo("010-0000-0000");
+        assertThat(orderMap.get("customer_address")).isEqualTo("서울시");
+        assertThat(orderMap.get("customer_email_address")).isEqualTo("taro@example.com");
+        assertThat(orderMap.get("payment_method")).isEqualTo(PaymentMethod.CONVENIENCE_STORE.toString());
+        assertThat(orderMap.get("billing_amount")).isEqualTo(1210);
+        assertThat(orderMap.get("order_date_time")).isNotNull();
+
+        //발급된 주문 ID를 사용하여 주문 데이터를 검색
+        int orderItemCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM t_order_item WHERE order_id=?", Integer.class, order.getId());
+        assertThat(orderItemCount).isEqualTo(2);
+
+        //검색된 주문 데이터의 고객 이름과 주소가 예상과 일치하는지 확인
+        int p01Stock = jdbcTemplate.queryForObject("SELECT stock FROM t_product WHERE id=?", Integer.class, "p01");
+        int p02Stock = jdbcTemplate.queryForObject("SELECT stock FROM t_product WHERE id=?", Integer.class, "p02");
+        assertThat(p01Stock).isEqualTo(7);
+        assertThat(p02Stock).isEqualTo(16);
    }
 }
