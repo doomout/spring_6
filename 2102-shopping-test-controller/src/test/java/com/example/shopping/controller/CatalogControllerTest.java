@@ -50,4 +50,18 @@ public class CatalogControllerTest {
                 .andExpect(content().string(containsString("상품02")))
         ;
     }
+
+    @Test
+    void test_displayDetails() throws Exception {
+        Product product = new Product();
+        product.setName("상품01");
+        doReturn(product).when(catalogService).findById("p01");
+
+        mockMvc.perform(
+                        get("/catalog/display-details")
+                                .param("productId", "p01")
+                )
+                .andExpect(content().string(containsString("상품01")))
+        ;
+    }
 }
