@@ -1,5 +1,6 @@
 package com.example.shopping.controller;
 
+import com.example.shopping.exception.StockShortageException;
 import com.example.shopping.service.OrderService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,9 +8,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 //OrderController 클래스의 테스트 클래스를 생성하고,
 //validateInput 메서드에 대해 입력 확인이 제대로 이루어지고
@@ -37,6 +40,19 @@ public class OrderControllerTest {
                 .andExpect(view().name("order/orderForm"))
                 .andExpect(model().attributeHasFieldErrors("orderInput",
                         "name", "address", "phone", "emailAddress", "paymentMethod"))
+        ;
+    }
+
+    //주문을 확정할 때 재고가 부족할 경우,재고 부족 화면이 표시되는지 테스트
+    @Test
+    void test_order_재고부족() throws Exception {
+        doThrow(StockShortageException.class).when(orderService).placeOrder(any(), any());
+
+        mockMvc.perform(
+                        post("/order/place-order")
+                                .param("order", "")
+                )
+                .andExpect(content().string(containsString("재고부족")))
         ;
     }
 }
