@@ -8,6 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,4 +91,29 @@ class TrainingAdminRestControllerTest {
         System.out.println(json);
     }
 
+    //getTrainings(1개가 아닌 여러 개의 데이터를 가져오는) 메서드 테스트
+    @Test
+    void test_getTrainings() throws Exception {
+
+        List<Training> trainings = new ArrayList<>();
+
+        Training training = new Training();
+        training.setId("t01");
+        training.setTitle("Java 교육");
+        trainings.add(training);
+
+        training = new Training();
+        training.setId("t02");
+        training.setTitle("비즈니스 예절 교육");
+        trainings.add(training);
+
+        doReturn(trainings).when(trainingAdminService).findAll();
+
+        mockMvc.perform(get("/api/trainings").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].title").value("Java 교육"))
+                .andExpect(jsonPath("$[1].title").value("비즈니스 예절 교육"))
+        ;
+    }
 }
