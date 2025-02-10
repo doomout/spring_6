@@ -21,6 +21,7 @@ class CatalogControllerIntegrationTest {
     @Autowired
     MockMvc mockMvc;
 
+    // catalog/display-list 요청에 대한 테스트 메서드
     @Test
     void test_displayList() throws Exception {
         mockMvc.perform(
@@ -32,5 +33,14 @@ class CatalogControllerIntegrationTest {
 
     }
 
-
+    // catalog/display-details 요청에 대한 테스트 메서드
+    @Test
+    void test_displayDetails() throws Exception {
+        mockMvc.perform(
+                        get("/catalog/display-details")
+                                .param("productId", "p01")
+                )
+                .andExpect(content().string(containsString("지우개")))
+        ;
+    }
 }
