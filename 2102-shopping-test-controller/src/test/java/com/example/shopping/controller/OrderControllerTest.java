@@ -1,5 +1,6 @@
 package com.example.shopping.controller;
 
+import com.example.shopping.entity.Order;
 import com.example.shopping.exception.StockShortageException;
 import com.example.shopping.service.OrderService;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -40,6 +42,21 @@ public class OrderControllerTest {
                 .andExpect(view().name("order/orderForm"))
                 .andExpect(model().attributeHasFieldErrors("orderInput",
                         "name", "address", "phone", "emailAddress", "paymentMethod"))
+        ;
+    }
+
+    //order 메서드(주문을 확정하는 핸들러 메서드)를 테스트
+    @Test
+    void test_order() throws Exception {
+        Order order = new Order();
+        doReturn(order).when(orderService).placeOrder(any(), any());
+
+        mockMvc.perform(
+                        post("/order/place-order")
+                                .param("order", "")
+                )
+                .andExpect(flash().attribute("order", order))
+                .andExpect(redirectedUrl("/order/display-completion"))
         ;
     }
 
