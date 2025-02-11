@@ -30,7 +30,7 @@ class TrainingAdminRestControllerIntegrationTestMockMvc {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(3))
         .andExpect(jsonPath("$[0].title").value("비즈니스 예절 교육"))
-        .andExpect(jsonPath("$[1].title").value("Java 실전"))
+        .andExpect(jsonPath("$[1].title").value("자바 교육"))
          ;
     }
 

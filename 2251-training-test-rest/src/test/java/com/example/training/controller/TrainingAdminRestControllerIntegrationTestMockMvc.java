@@ -30,8 +30,19 @@ class TrainingAdminRestControllerIntegrationTestMockMvc {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(3))
         .andExpect(jsonPath("$[0].title").value("비즈니스 예절 교육"))
-        .andExpect(jsonPath("$[1].title").value("Java 실전"))
-         ;
+        .andExpect(jsonPath("$[1].title").value("자바 교육"))
+        ;
     }
 
+    //ID를 지정하고 교육 데이터 1건을 조회하는 API를 테스트
+    @Test
+    void test_getTraining() throws Exception {
+        mockMvc.perform(
+                        get("/api/trainings/{id}", "t01")
+                                .accept(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("비즈니스 예절 교육"))
+        ;
+    }
 }
