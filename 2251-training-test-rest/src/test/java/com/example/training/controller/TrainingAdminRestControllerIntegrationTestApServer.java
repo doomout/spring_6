@@ -29,4 +29,12 @@ class TrainingAdminRestControllerIntegrationTestApServer {
         Assertions.assertThat(trainings[1].getTitle()).isEqualTo("자바 교육");
     }
 
+    //ID를 지정하여 교육 데이터 1건을 조회하는 API를 테스트
+    @Test
+    void test_getTraining() {
+        ResponseEntity<Training> responseEntity = testRestTemplate.getForEntity("/api/trainings/{id}", Training.class, "t01");
+        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Training training = responseEntity.getBody();
+        Assertions.assertThat(training.getTitle()).isEqualTo("비즈니스 예절 교육");
+    }
 }
