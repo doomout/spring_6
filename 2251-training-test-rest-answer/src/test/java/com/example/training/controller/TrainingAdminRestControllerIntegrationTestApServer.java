@@ -26,7 +26,7 @@ class TrainingAdminRestControllerIntegrationTestApServer {
         Training[] trainings = responseEntity.getBody();
         Assertions.assertThat(trainings.length).isEqualTo(3);
         Assertions.assertThat(trainings[0].getTitle()).isEqualTo("비즈니스 예절 교육");
-        Assertions.assertThat(trainings[1].getTitle()).isEqualTo("Java 실전");
+        Assertions.assertThat(trainings[1].getTitle()).isEqualTo("자바 교육");
     }
 
     @Test
