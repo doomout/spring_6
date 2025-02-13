@@ -40,17 +40,17 @@ class OrderUiTest {
         $("input[name=quantity]").setValue("2");
         $("input[value=장바구니에추가]").click();
         $("input[value=주문하기]").click();
-        $("input[name=name]").setValue("김철수");
+        $("input[name=name]").setValue("김재벌");
         $("input[name=address]").setValue("서울시");
         $("input[name=phone]").setValue("010-0000-0000");
-        $("input[name=emailAddress]").setValue("taro@example.com");
+        $("input[name=emailAddress]").setValue("aaa@gmail.com");
         $("input[name=paymentMethod]").selectRadio("CONVENIENCE_STORE");
         $("input[value=주문내용확인]").click();
         $("input[value=주문확정]").click();
 
         String orderId = $("div span").text();
         Map<String, Object> reservationMap = jdbcTemplate.queryForMap("SELECT * FROM t_order WHERE id=?", orderId);
-        Assertions.assertThat(reservationMap.get("customer_name")).isEqualTo("김철수");
+        Assertions.assertThat(reservationMap.get("customer_name")).isEqualTo("김재벌");
     }
 
     @Test
