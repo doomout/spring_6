@@ -63,6 +63,6 @@ class OrderUiTest {
         $("input[value=장바구니에추가]").click();
         $("input[value=주문하기]").click();
         $("input[value=주문내용확인]").click();
-        $("td div").should(exactText("이름은 필수입니다"));
+        $("td div").should(exactText("이름은 필수입니다."));
     }
 }
