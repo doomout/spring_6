@@ -15,6 +15,7 @@ import com.codeborne.selenide.Configuration;
 
 import java.util.Map;
 
+import static com.codeborne.selenide.Condition.exactText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
 
@@ -79,6 +80,21 @@ class OrderUiTest {
 
         // 12. 저장된 주문의 고객 이름이 '김철수'인지 검증
         Assertions.assertThat(reservationMap.get("customer_name")).isEqualTo("김철수");
+    }
+
+    //주문 폼에 올바르지 않은 입력이 들어온 경우
+    //오류 메시지가 표시되는 것을 확인하는 테스트 메서드
+    @Test
+    @Sql("OrderUiTest.sql")
+    @Sql(value = "clear.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
+    void test_주문양식입력오류() {
+        open("/catalog/display-list");
+        $("a[href*=productId]").click();
+        $("input[name=quantity]").setValue("2");
+        $("input[value=장바구니에추가]").click();
+        $("input[value=주문하기]").click();
+        $("input[value=주문내용확인]").click();
+        $("td div").should(exactText("이름은 필수입니다."));
     }
 }
 
